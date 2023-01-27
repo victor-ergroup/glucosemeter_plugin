@@ -1,5 +1,7 @@
 package com.example.glucosemeter_plugin;
 
+import android.bluetooth.BluetoothDevice;
+
 import androidx.annotation.NonNull;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -7,6 +9,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBean;
+import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBluetoothUtil;
+import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseDeviceBean;
+import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseErBean;
 
 /** GlucosemeterPlugin */
 public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler {
@@ -15,6 +21,11 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler {
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
+  private BloodGlucoseBluetoothUtil bloodGlucoseBluetoothUtil;
+
+  public void openBluetooth(){
+    bloodGlucoseBluetoothUtil.openBluetooth();
+  }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
