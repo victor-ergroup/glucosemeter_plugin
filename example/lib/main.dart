@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
     _glucosemeterPlugin.initGlucoseBluetoothUtil();
+    flutterBlue.startScan();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -60,44 +61,65 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Column(
-            children: [
-              Text('Running on: $_platformVersion\n'),
-              TextButton(
-                child: Text('Bluetooth State'),
-                onPressed: () async {
-                  await _glucosemeterPlugin.openBluetooth();
-                  print('test');
-                  bool? result = await _glucosemeterPlugin.bluetoothState();
-                  print(result);
-                  // print(result);
-                },
-              ),
-              TextButton(
-                child: Text('Scan'),
-                onPressed: (){
-                  flutterBlue.startScan(timeout: const Duration(seconds: 4));
-                  setState(() {
-                    bluetoothScanResultList = [];
-                  });
-                  StreamSubscription<List<ScanResult>> bluetoothScanResult = flutterBlue.scanResults.listen((results) {
-                    setState(() {
-                      bluetoothScanResultList = results;
-                    });
-                  });
-                },
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: bluetoothScanResultList.length,
-                itemBuilder: (context, index){
-                  return ListTile(
-                    title: Text(bluetoothScanResultList[index].device.name),
-                    subtitle: Text(bluetoothScanResultList[index].device.type.name),
-                  );
-                },
-              )
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text('Running on: $_platformVersion\n'),
+                TextButton(
+                  child: const Text('Bluetooth State'),
+                  onPressed: () async {
+                    await _glucosemeterPlugin.openBluetooth();
+                    _glucosemeterPlugin.attachBluetoothListener();
+                    bool? result = await _glucosemeterPlugin.bluetoothState();
+                    print(result);
+                    // print(result);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Scan'),
+                  onPressed: (){
+                    flutterBlue.startScan();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Stop Scan'),
+                  onPressed: (){
+                    flutterBlue.stopScan();
+                  },
+                ),
+                StreamBuilder(
+                  stream: flutterBlue.scanResults,
+                  builder: (context, snapshot){
+                    if(snapshot.data == null) return const Text('Null');
+                    if(snapshot.data!.isEmpty) return const Text('Empty');
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data?.length,
+                      itemBuilder: (context, index){
+                        return Card(
+                          child: ListTile(
+                            title: Text(snapshot.data![index].device.name),
+                            subtitle: Text(snapshot.data![index].device.type.name),
+                            trailing: Text(snapshot.data![index].advertisementData.connectable.toString()),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                // ListView.builder(
+                //   shrinkWrap: true,
+                //   itemCount: bluetoothScanResultList.length,
+                //   itemBuilder: (context, index){
+                //     return ListTile(
+                //       title: Text(bluetoothScanResultList[index].device.name),
+                //       subtitle: Text(bluetoothScanResultList[index].device.type.name),
+                //     );
+                //   },
+                // )
+              ],
+            ),
           ),
         ),
       ),
