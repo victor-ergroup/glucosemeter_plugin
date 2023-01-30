@@ -23,7 +23,23 @@ abstract class GlucosemeterPluginPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<void> initGlucoseBluetoothUtil(){
+    throw UnimplementedError('initGlucoseBluetoothUtil() has not been implemented.');
+  }
+
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+
+  Future<void> openBluetooth() {
+    throw UnimplementedError('openBluetooth() has not been implemented.');
+  }
+
+  Future<void> closeBluetooth(){
+    throw UnimplementedError('closeBluetooth() has not been implemented.');
+  }
+
+  Future<bool?> bluetoothState(){
+    throw UnimplementedError('bluetoothState() has not been implemented.');
   }
 }

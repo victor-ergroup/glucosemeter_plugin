@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+    _glucosemeterPlugin.initGlucoseBluetoothUtil();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -62,6 +63,16 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             children: [
               Text('Running on: $_platformVersion\n'),
+              TextButton(
+                child: Text('Bluetooth State'),
+                onPressed: () async {
+                  await _glucosemeterPlugin.openBluetooth();
+                  print('test');
+                  bool? result = await _glucosemeterPlugin.bluetoothState();
+                  print(result);
+                  // print(result);
+                },
+              ),
               TextButton(
                 child: Text('Scan'),
                 onPressed: (){
