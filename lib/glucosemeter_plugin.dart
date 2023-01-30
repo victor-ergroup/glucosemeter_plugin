@@ -21,4 +21,8 @@ class GlucosemeterPlugin {
   Future<bool?> bluetoothState(){
     return GlucosemeterPluginPlatform.instance.bluetoothState();
   }
+
+  Future<void> attachBluetoothListener(){
+    return GlucosemeterPluginPlatform.instance.attachBluetoothListener();
+  }
 }

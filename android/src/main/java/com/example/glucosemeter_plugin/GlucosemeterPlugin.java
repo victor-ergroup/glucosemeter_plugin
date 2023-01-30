@@ -14,10 +14,17 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+
+import com.cj.bluetoothlibrary.BluetoothDevices;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBean;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBluetoothUtil;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseDeviceBean;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseErBean;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** GlucosemeterPlugin */
 public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
@@ -73,6 +80,86 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
     }
   }
 
+  public void attachBluetoothListener(@NonNull MethodCall call, @NonNull Result result){
+    bloodGlucoseBluetoothUtil.setBloodBluetoothListener(new BloodGlucoseBluetoothUtil.OnBloodBluetoothListener() {
+      @Override
+      public void onSearchStarted() {
+        Log.i("GLUCOSEMETER:INFO", "onSearchStarted runned");
+      }
+
+      @Override
+      public void onSearchStopped() {
+        Log.i("GLUCOSEMETER:INFO", "onSearchStopped runned");
+      }
+
+      @Override
+      public void onDeviceSpyListener(BluetoothDevice bluetoothDevice, Integer integer) {
+        Log.i("GLUCOSEMETER:INFO", "onDeviceSpyListener runned");
+      }
+
+      @Override
+      public void onDeviceBreakListener() {
+        Log.i("GLUCOSEMETER:INFO", "onDeviceBreakListener runned");
+      }
+
+      @Override
+      public void onDeviceConnectSucceed() {
+        Log.i("GLUCOSEMETER:INFO", "onDeviceConnectSucceed runned");
+      }
+
+      @Override
+      public void onConcentrationResultListener(BloodGlucoseBean bloodGlucoseBean) {
+        HashMap<String, String> resultMap = new HashMap<>();
+        resultMap.put("concentration", bloodGlucoseBean.getConcentration());
+        resultMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
+
+        Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned: " + bloodGlucoseBean.toString());
+        result.success(resultMap);
+      }
+
+      @Override
+      public void onTestPaperResultListener() {
+        Log.i("GLUCOSEMETER:INFO", "onTestPaperResultListener runned");
+      }
+
+      @Override
+      public void onBleedResultListener() {
+        Log.i("GLUCOSEMETER:INFO", "onBleedResultListener runned");
+      }
+
+      @Override
+      public void onDownTimeResultListener(int i) {
+        Log.i("GLUCOSEMETER:INFO", "onDownTimeResultListener runned");
+      }
+
+      @Override
+      public void onErTypeResultListener(String s) {
+        Log.i("GLUCOSEMETER:INFO", "onErTypeResultListener runned: " + s);
+        result.success(s);
+      }
+
+      @Override
+      public void onMemorySynListener(List<BloodGlucoseBean> list) {
+        Log.i("GLUCOSEMETER:INFO", "onMemorySynListener runned: " + list.toString());
+      }
+
+      @Override
+      public void onDeviceResultListener(BloodGlucoseDeviceBean bloodGlucoseDeviceBean) {
+        Log.i("GLUCOSEMETER:INFO", "onDeviceResultListener runned: " + bloodGlucoseDeviceBean.toString());
+      }
+
+      @Override
+      public void onReadBluetoothRssi(Integer integer) {
+        Log.i("GLUCOSEMETER:INFO", "onReadBluetoothRssi runned: " + integer.toString());
+      }
+
+      @Override
+      public void onDeviceConnectFailing(int i) {
+        Log.i("GLUCOSEMETER:INFO", "onDeviceConnectFailing runned: " + i);
+      }
+    });
+  }
+
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext();
@@ -97,6 +184,9 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
         break;
       case "bluetoothState" :
         bluetoothState(call, result);
+        break;
+      case "attachBluetoothListener" :
+        attachBluetoothListener(call, result);
         break;
       default:
         result.notImplemented();

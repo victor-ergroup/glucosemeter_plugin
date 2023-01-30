@@ -34,4 +34,9 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   Future<bool?> bluetoothState() async {
     return await methodChannel.invokeMethod<bool>('bluetoothState');
   }
+
+  @override
+  Future<void> attachBluetoothListener() async {
+    return await methodChannel.invokeMethod<void>('attachBluetoothListener');
+  }
 }

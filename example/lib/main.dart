@@ -75,16 +75,24 @@ class _MyAppState extends State<MyApp> {
                     // print(result);
                   },
                 ),
-                TextButton(
-                  child: const Text('Scan'),
-                  onPressed: (){
-                    flutterBlue.startScan();
-                  },
-                ),
-                TextButton(
-                  child: const Text('Stop Scan'),
-                  onPressed: (){
-                    flutterBlue.stopScan();
+                StreamBuilder(
+                  stream: flutterBlue.isScanning,
+                  builder: (context, snapshot){
+                    if(snapshot.data == false){
+                      return TextButton(
+                        child: const Text('Scan'),
+                        onPressed: (){
+                          flutterBlue.startScan();
+                        },
+                      );
+                    }else{
+                      return TextButton(
+                        child: const Text('Stop Scan'),
+                        onPressed: (){
+                          flutterBlue.stopScan();
+                        },
+                      );
+                    }
                   },
                 ),
                 StreamBuilder(
@@ -102,6 +110,10 @@ class _MyAppState extends State<MyApp> {
                             title: Text(snapshot.data![index].device.name),
                             subtitle: Text(snapshot.data![index].device.type.name),
                             trailing: Text(snapshot.data![index].advertisementData.connectable.toString()),
+                            onTap: () async {
+                              await snapshot.data![index].device.connect();
+                              await _glucosemeterPlugin.attachBluetoothListener();
+                            },
                           ),
                         );
                       },
