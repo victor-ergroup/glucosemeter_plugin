@@ -41,8 +41,11 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   }
 
   @override
-  Future<void> connectBluetooth() async {
-    return await methodChannel.invokeMethod<void>('connectBluetooth');
+  Future<void> connectBluetooth(Object bluetoothDevice) async {
+    Map<String, dynamic> argsMap = {
+      'bluetoothDevice' : bluetoothDevice.toString()
+    };
+    return await methodChannel.invokeMethod<void>('connectBluetooth', argsMap);
   }
 
   @override

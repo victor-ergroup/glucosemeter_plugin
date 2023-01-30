@@ -113,6 +113,7 @@ class _MyAppState extends State<MyApp> {
                             onTap: () async {
                               await snapshot.data![index].device.connect();
                               await _glucosemeterPlugin.attachBluetoothListener();
+                              // await _glucosemeterPlugin.connectBluetooth(snapshot.data![index].device);
                             },
                           ),
                         );

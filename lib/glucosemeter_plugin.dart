@@ -26,8 +26,8 @@ class GlucosemeterPlugin {
     return GlucosemeterPluginPlatform.instance.stopScan();
   }
 
-  Future<void> connectBluetooth(){
-    return GlucosemeterPluginPlatform.instance.connectBluetooth();
+  Future<void> connectBluetooth(Object bluetoothDevice){
+    return GlucosemeterPluginPlatform.instance.connectBluetooth(bluetoothDevice);
   }
 
   Future<String?> connectedDeviceName(){
