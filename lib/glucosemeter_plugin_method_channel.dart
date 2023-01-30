@@ -54,6 +54,11 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   }
 
   @override
+  Future<void> automaticConnectBluetooth() async {
+    return await methodChannel.invokeMethod<void>('automaticConnectBluetooth');
+  }
+
+  @override
   Future<String?> connectedBluetoothDeviceAddress() async {
     return await methodChannel.invokeMethod<String>('connectedBluetoothDeviceAddress');
   }
@@ -61,6 +66,11 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   @override
   Future<void> connectedBluetoothDeviceRssi() async {
     return await methodChannel.invokeMethod<void>('connectedBluetoothDeviceRssi');
+  }
+
+  @override
+  Future<void> disconnectBluetooth() async {
+    return await methodChannel.invokeMethod<void>('disconnectBluetooth');
   }
 
   @override

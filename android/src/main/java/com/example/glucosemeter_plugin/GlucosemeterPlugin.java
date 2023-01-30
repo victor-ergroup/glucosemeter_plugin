@@ -107,6 +107,32 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
     }
   }
 
+  public void automaticConnectBluetooth(@NonNull MethodCall call, @NonNull Result result){
+    try {
+      bloodGlucoseBluetoothUtil.connectAutomaticBluetooth();
+      result.success(true);
+    }catch (NullPointerException nullPointerException){
+      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
+      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
+    }catch (Exception e){
+      Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
+      result.error("ERROR", e.getMessage(), e.getCause());
+    }
+  }
+
+  public void disconnectBluetooth(@NonNull MethodCall call, @NonNull Result result){
+    try {
+      bloodGlucoseBluetoothUtil.breakBluetooth();
+      result.success(true);
+    }catch (NullPointerException nullPointerException){
+      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
+      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
+    }catch (Exception e){
+      Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
+      result.error("ERROR", e.getMessage(), e.getCause());
+    }
+  }
+
   public void connectedDeviceName(@NonNull MethodCall call, @NonNull Result result){
     try {
       String deviceName = bloodGlucoseBluetoothUtil.connectBluetoothDeviceName();
@@ -163,6 +189,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   }
 
   public void attachBluetoothListener(@NonNull MethodCall call, @NonNull Result result){
+    Log.i("GLUCOSEMETER:INFO", "bluetoothListener attached");
     bloodGlucoseBluetoothUtil.setBloodBluetoothListener(new BloodGlucoseBluetoothUtil.OnBloodBluetoothListener() {
       @Override
       public void onSearchStarted() {
@@ -272,6 +299,12 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
         break;
       case "connectBluetooth" :
         connectBluetooth(call, result);
+        break;
+      case "automaticConnectBluetooth" :
+        automaticConnectBluetooth(call, result);
+        break;
+      case "disconnectBluetooth" :
+        disconnectBluetooth(call, result);
         break;
       case "connectedDeviceName" :
         connectedDeviceName(call, result);
