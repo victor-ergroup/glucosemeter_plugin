@@ -18,6 +18,30 @@ class GlucosemeterPlugin {
     return GlucosemeterPluginPlatform.instance.closeBluetooth();
   }
 
+  Future<void> scanBluetooth(){
+    return GlucosemeterPluginPlatform.instance.scanBluetooth();
+  }
+
+  Future<void> stopScan(){
+    return GlucosemeterPluginPlatform.instance.stopScan();
+  }
+
+  Future<void> connectBluetooth(){
+    return GlucosemeterPluginPlatform.instance.connectBluetooth();
+  }
+
+  Future<String?> connectedDeviceName(){
+    return GlucosemeterPluginPlatform.instance.connectedDeviceName();
+  }
+
+  Future<void> connectedBluetoothDeviceRssi(){
+    return GlucosemeterPluginPlatform.instance.connectedBluetoothDeviceRssi();
+  }
+
+  Future<String?> connectedBluetoothDeviceAddress(){
+    return GlucosemeterPluginPlatform.instance.connectedBluetoothDeviceAddress();
+  }
+
   Future<bool?> bluetoothState(){
     return GlucosemeterPluginPlatform.instance.bluetoothState();
   }

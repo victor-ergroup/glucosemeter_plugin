@@ -31,6 +31,36 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   }
 
   @override
+  Future<void> scanBluetooth() async {
+    return await methodChannel.invokeMethod<void>('scanBluetooth');
+  }
+
+  @override
+  Future<void> stopScan() async {
+    return await methodChannel.invokeMethod<void>('stopScan');
+  }
+
+  @override
+  Future<void> connectBluetooth() async {
+    return await methodChannel.invokeMethod<void>('connectBluetooth');
+  }
+
+  @override
+  Future<String?> connectedDeviceName() async {
+    return await methodChannel.invokeMethod<String>('connectedDeviceName');
+  }
+
+  @override
+  Future<String?> connectedBluetoothDeviceAddress() async {
+    return await methodChannel.invokeMethod<String>('connectedBluetoothDeviceAddress');
+  }
+
+  @override
+  Future<void> connectedBluetoothDeviceRssi() async {
+    return await methodChannel.invokeMethod<void>('connectedBluetoothDeviceRssi');
+  }
+
+  @override
   Future<bool?> bluetoothState() async {
     return await methodChannel.invokeMethod<bool>('bluetoothState');
   }
