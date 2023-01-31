@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:glucosemeter_plugin/glucosemeter_plugin.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'device_info.dart';
 
 class MainPage extends StatefulWidget {
@@ -27,6 +27,16 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> initGlucosemeterPlugin() async {
+    List<Permission> permissionList = [
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+      Permission.bluetoothAdvertise,
+      Permission.nearbyWifiDevices
+    ];
+
+    Map<Permission, PermissionStatus> permissionResult = await permissionList.request();
+    print(permissionResult);
     await glucosemeterPlugin.initGlucoseBluetoothUtil();
     await glucosemeterPlugin.automaticConnectBluetooth();
     await glucosemeterPlugin.attachBluetoothListener();
