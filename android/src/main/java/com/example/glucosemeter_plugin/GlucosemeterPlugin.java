@@ -1,10 +1,13 @@
 package com.example.glucosemeter_plugin;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -14,6 +17,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 
 import com.cj.bluetoothlibrary.BluetoothDevices;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBean;
@@ -33,6 +37,8 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
+
+  private Activity activity;
   private Context context;
   private BloodGlucoseBluetoothUtil bloodGlucoseBluetoothUtil;
 
@@ -44,6 +50,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   public void openBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try{
       bloodGlucoseBluetoothUtil.openBluetooth();
+      Log.i("GLUCOSEMETERPLUGIN", "openBluetooth executed");
       result.success(null);
     }catch (NullPointerException nullPointerException){
       Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
@@ -57,6 +64,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   public void closeBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try {
       bloodGlucoseBluetoothUtil.closeBluetooth();
+      Log.i("GLUCOSEMETERPLUGIN", "closeBluetooth executed");
       result.success(null);
     }catch (NullPointerException nullPointerException){
       Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
@@ -109,6 +117,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
 
   public void automaticConnectBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try {
+      Log.i("GLUCOSEMETERPLUGIN", "automaticConnectBluetooth executed");
       bloodGlucoseBluetoothUtil.connectAutomaticBluetooth();
       result.success(true);
     }catch (NullPointerException nullPointerException){
@@ -190,7 +199,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
 
   public void attachBluetoothListener(@NonNull MethodCall call, @NonNull Result result){
     Log.i("GLUCOSEMETER:INFO", "bluetoothListener attached");
-    bloodGlucoseBluetoothUtil.setBloodBluetoothListener(new BloodGlucoseBluetoothUtil.OnBloodBluetoothListener() {
+    activity.runOnUiThread(() -> bloodGlucoseBluetoothUtil.setBloodBluetoothListener(new BloodGlucoseBluetoothUtil.OnBloodBluetoothListener() {
       @Override
       public void onSearchStarted() {
         Log.i("GLUCOSEMETER:INFO", "onSearchStarted runned");
@@ -223,7 +232,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
         resultMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
 
         Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned: " + bloodGlucoseBean.toString());
-        result.success(resultMap);
+//        result.success(resultMap);
       }
 
       @Override
@@ -243,18 +252,56 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
 
       @Override
       public void onErTypeResultListener(String s) {
-        Log.i("GLUCOSEMETER:INFO", "onErTypeResultListener runned: " + s);
-        result.success(s);
+        String message = "";
+        switch (s){
+          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER1_RES:
+            message = "开机自检错误";
+            break;
+          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER2_RES:
+            message = "血糖试纸已使用过或被污染";
+            break;
+          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER3_RES:
+            message = "在血糖试纸上加血时间过早";
+            break;
+          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER4_RES:
+            message = "测试过程中，试纸被移动 或采样不稳";
+            break;
+          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER5_RES:
+            message = "血糖试纸型号不匹配";
+            break;
+          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER6_RES:
+            message = "其他问题";
+            break;
+        }
+        Log.i("GLUCOSEMETER:INFO", message);
+//        result.success(message);
       }
 
       @Override
       public void onMemorySynListener(List<BloodGlucoseBean> list) {
-        Log.i("GLUCOSEMETER:INFO", "onMemorySynListener runned: " + list.toString());
+        StringBuilder data = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+          data.append("\n"+(i + 1))
+                  .append("\n时间戳：")
+                  .append(list.get(i).getTimestamp())
+                  .append("\n浓度：")
+                  .append(list.get(i).getConcentration());
+        }
+        Log.i("GLUCOSEMETER:INFO", "Received from memory" + data);
       }
 
       @Override
       public void onDeviceResultListener(BloodGlucoseDeviceBean bloodGlucoseDeviceBean) {
-        Log.i("GLUCOSEMETER:INFO", "onDeviceResultListener runned: " + bloodGlucoseDeviceBean.toString());
+        //仪器主要信息
+        StringBuilder data = new StringBuilder();
+        data.append("仪器主要信息：")
+                .append("\n型号：")
+                .append(bloodGlucoseDeviceBean.getDevice_model())
+                .append("\n程序编码：")
+                .append(bloodGlucoseDeviceBean.getDevice_procedure())
+                .append("\n版本：")
+                .append(bloodGlucoseDeviceBean.getDevice_versions());
+        Log.i("GLUCOSEMETER:INFO", "Received device info: " + data);
       }
 
       @Override
@@ -266,7 +313,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
       public void onDeviceConnectFailing(int i) {
         Log.i("GLUCOSEMETER:INFO", "onDeviceConnectFailing runned: " + i);
       }
-    });
+    }));
   }
 
   @Override
@@ -333,7 +380,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-
+    activity = binding.getActivity();
   }
 
   @Override
