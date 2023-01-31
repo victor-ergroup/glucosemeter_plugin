@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,8 @@ import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseDeviceBean;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseErBean;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,20 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   private Activity activity;
   private Context context;
   private BloodGlucoseBluetoothUtil bloodGlucoseBluetoothUtil;
+
+  private List<String> deviceList = Arrays.asList(
+    "BG-211b",
+    "BG-207b",
+    "BG-208b",
+    "BG-209b",
+    "BG-707b",
+    "BG-709b",
+    "BG-210b",
+    "BG-710b",
+    "BG-211b",
+    "BG-212b",
+    "BG-712b"
+  );
 
   public void openBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try{
@@ -186,6 +203,10 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
       @Override
       public void onDeviceSpyListener(BluetoothDevice bluetoothDevice, Integer integer) {
         Log.i("GLUCOSEMETER:INFO", "onDeviceSpyListener runned");
+        Log.i("GLUCOSEMETER:INFO", bluetoothDevice.getName());
+        if(deviceList.contains(bluetoothDevice.getName())){
+          bloodGlucoseBluetoothUtil.connectBluetooth(bluetoothDevice);
+        }
       }
 
       @Override
