@@ -37,7 +37,7 @@ class _MainPageState extends State<MainPage> {
 
     Map<Permission, PermissionStatus> permissionResult = await permissionList.request();
     print(permissionResult);
-    await glucosemeterPlugin.initGlucoseBluetoothUtil();
+    // await glucosemeterPlugin.initGlucoseBluetoothUtil();
     await glucosemeterPlugin.automaticConnectBluetooth();
     await glucosemeterPlugin.attachBluetoothListener();
   }

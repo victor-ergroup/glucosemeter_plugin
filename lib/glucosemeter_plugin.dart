@@ -6,10 +6,6 @@ class GlucosemeterPlugin {
     return GlucosemeterPluginPlatform.instance.getPlatformVersion();
   }
 
-  Future<void> initGlucoseBluetoothUtil(){
-    return GlucosemeterPluginPlatform.instance.initGlucoseBluetoothUtil();
-  }
-
   Future<void> openBluetooth(){
     return GlucosemeterPluginPlatform.instance.openBluetooth();
   }

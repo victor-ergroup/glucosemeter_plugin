@@ -16,11 +16,6 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   }
 
   @override
-  Future<void> initGlucoseBluetoothUtil() async {
-    return await methodChannel.invokeMethod<void>('initGlucoseBluetoothUtil');
-  }
-
-  @override
   Future<void> openBluetooth() async {
     return await methodChannel.invokeMethod<void>('openBluetooth');
   }

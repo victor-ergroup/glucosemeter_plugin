@@ -42,19 +42,11 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   private Context context;
   private BloodGlucoseBluetoothUtil bloodGlucoseBluetoothUtil;
 
-  public void initGlucoseBluetoothUtil(@NonNull MethodCall call, @NonNull Result result){
-    bloodGlucoseBluetoothUtil = new BloodGlucoseBluetoothUtil(context);
-    result.success(null);
-  }
-
   public void openBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try{
       bloodGlucoseBluetoothUtil.openBluetooth();
       Log.i("GLUCOSEMETERPLUGIN", "openBluetooth executed");
       result.success(null);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
@@ -62,26 +54,23 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   }
 
   public void closeBluetooth(@NonNull MethodCall call, @NonNull Result result){
-    try {
-      bloodGlucoseBluetoothUtil.closeBluetooth();
-      Log.i("GLUCOSEMETERPLUGIN", "closeBluetooth executed");
-      result.success(null);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
-    }catch (Exception e){
-      Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
-      result.error("ERROR", e.getMessage(), e.getCause());
-    }
+    activity.runOnUiThread(() -> {
+      try {
+        bloodGlucoseBluetoothUtil.closeBluetooth();
+        Log.i("GLUCOSEMETERPLUGIN", "closeBluetooth executed");
+        result.success(null);
+      }catch (Exception e){
+        Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
+        result.error("ERROR", e.getMessage(), e.getCause());
+      }
+    });
   }
 
   public void scanBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try {
       bloodGlucoseBluetoothUtil.scanBluetooth();
+      Log.i("GLUCOSEMETERPLUGIN", "scanBluetooth executed");
       result.success(null);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
@@ -91,51 +80,46 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   public void stopScan(@NonNull MethodCall call, @NonNull Result result){
     try {
       bloodGlucoseBluetoothUtil.stopBluetooth();
+      Log.i("GLUCOSEMETERPLUGIN", "stopBluetooth executed");
       result.success(null);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
     }
   }
 
+  // NOTE: Cannot be used.
   public void connectBluetooth(@NonNull MethodCall call, @NonNull Result result){
-    try {
-      BluetoothDevice bluetoothDevice = call.argument("bluetoothDevice");
-      bloodGlucoseBluetoothUtil.connectBluetooth(bluetoothDevice);
-      result.success(null);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
-    }catch (Exception e){
-      Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
-      result.error("ERROR", e.getMessage(), e.getCause());
-    }
+    activity.runOnUiThread(() -> {
+      try {
+        BluetoothDevice bluetoothDevice = call.argument("bluetoothDevice");
+        bloodGlucoseBluetoothUtil.connectBluetooth(bluetoothDevice);
+        result.success(null);
+      }catch (Exception e){
+        Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
+        result.error("ERROR", e.getMessage(), e.getCause());
+      }
+    });
   }
 
   public void automaticConnectBluetooth(@NonNull MethodCall call, @NonNull Result result){
-    try {
-      Log.i("GLUCOSEMETERPLUGIN", "automaticConnectBluetooth executed");
-      bloodGlucoseBluetoothUtil.connectAutomaticBluetooth();
-      result.success(true);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
-    }catch (Exception e){
-      Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
-      result.error("ERROR", e.getMessage(), e.getCause());
-    }
+    activity.runOnUiThread(() -> {
+      try {
+        bloodGlucoseBluetoothUtil.connectAutomaticBluetooth();
+        Log.i("GLUCOSEMETERPLUGIN", "automaticConnectBluetooth executed");
+        result.success(true);
+      }catch (Exception e){
+        Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
+        result.error("ERROR", e.getMessage(), e.getCause());
+      }
+    });
   }
 
   public void disconnectBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try {
       bloodGlucoseBluetoothUtil.breakBluetooth();
+      Log.i("GLUCOSEMETERPLUGIN", "disconnectBluetooth executed");
       result.success(true);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
@@ -145,10 +129,8 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   public void connectedDeviceName(@NonNull MethodCall call, @NonNull Result result){
     try {
       String deviceName = bloodGlucoseBluetoothUtil.connectBluetoothDeviceName();
+      Log.i("GLUCOSEMETERPLUGIN", "connectedDeviceName executed - " + deviceName);
       result.success(deviceName);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
@@ -158,10 +140,8 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   public void connectedBluetoothDeviceAddress(@NonNull MethodCall call, @NonNull Result result){
     try {
       String deviceAddress = bloodGlucoseBluetoothUtil.connectBluetoothDeviceAddress();
+      Log.i("GLUCOSEMETERPLUGIN", "connectedBluetoothDeviceAddress executed - " + deviceAddress);
       result.success(deviceAddress);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
@@ -171,26 +151,19 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   public void connectedBluetoothDeviceRssi(@NonNull MethodCall call, @NonNull Result result){
     try {
       bloodGlucoseBluetoothUtil.connectBluetoothRssi();
+      Log.i("GLUCOSEMETERPLUGIN", "connectedBluetoothDeviceRssi executed");
       result.success(null);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
     }
   }
 
-
-
-
   public void bluetoothState(@NonNull MethodCall call, @NonNull Result result){
     try {
       boolean state = bloodGlucoseBluetoothUtil.stateBluetooth();
+      Log.i("GLUCOSEMETERPLUGIN", "connectedBluetoothDeviceAddress executed - " + state);
       result.success(state);
-    }catch (NullPointerException nullPointerException){
-      Log.e("GLUCOSEMETERPLUGIN", "NullPointerException. Have you called initGlucoseBluetoothUtil()?");
-      result.error("NullPointerException", nullPointerException.getMessage(), nullPointerException.getCause());
     }catch (Exception e){
       Log.e("GLUCOSEMETERPLUGIN", e.getMessage());
       result.error("ERROR", e.getMessage(), e.getCause());
@@ -319,6 +292,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext();
+    bloodGlucoseBluetoothUtil = new BloodGlucoseBluetoothUtil(context);
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "glucosemeter_plugin");
     channel.setMethodCallHandler(this);
   }
@@ -328,9 +302,6 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
     switch (call.method){
       case "getPlatformVersion" :
         result.success("Android " + android.os.Build.VERSION.RELEASE);
-        break;
-      case "initGlucoseBluetoothUtil" :
-        initGlucoseBluetoothUtil(call, result);
         break;
       case "openBluetooth" :
         openBluetooth(call, result);
