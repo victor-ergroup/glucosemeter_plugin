@@ -19,9 +19,17 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    glucosemeterPlugin.initGlucoseBluetoothUtil();
-    glucosemeterPlugin.automaticConnectBluetooth();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      initGlucosemeterPlugin();
+    });
+
     flutterBlue.startScan();
+  }
+
+  Future<void> initGlucosemeterPlugin() async {
+    await glucosemeterPlugin.initGlucoseBluetoothUtil();
+    await glucosemeterPlugin.automaticConnectBluetooth();
+    await glucosemeterPlugin.attachBluetoothListener();
   }
 
   @override
@@ -221,8 +229,25 @@ class _MainPageState extends State<MainPage> {
                         subtitle: Text(snapshot.data![index].device.type.name),
                         trailing: Text(snapshot.data![index].advertisementData.connectable.toString()),
                         onTap: () async {
-                          await snapshot.data![index].device.connect();
+                          try{
+                            await snapshot.data![index].device.connect();
+                            if(!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Connected')));
+                          }catch(e){
+                            print(e);
+                            if(!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                          }
                           // await glucosemeterPlugin.attachBluetoothListener();
+                        },
+                        onLongPress: (){
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_){
+                                return DeviceInfo(bluetoothDevice: snapshot.data![index].device);
+                              }
+                            )
+                          );
                         },
                       ),
                     );
