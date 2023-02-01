@@ -172,7 +172,6 @@
 				C76167CD3DE1A488682F81CE /* Pods-RunnerTests.release.xcconfig */,
 				E1A58C2DF398B2CC854CF19C /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -633,7 +632,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.example;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.glucosemeter-plugin";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
