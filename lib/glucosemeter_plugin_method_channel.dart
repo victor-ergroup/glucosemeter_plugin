@@ -9,6 +9,8 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('glucosemeter_plugin');
 
+  static const EventChannel eventChannel = EventChannel('glucosemeter_plugin_event');
+
   @override
   Future<String?> getPlatformVersion() async {
     final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
@@ -76,5 +78,10 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   @override
   Future<void> attachBluetoothListener() async {
     return await methodChannel.invokeMethod<void>('attachBluetoothListener');
+  }
+
+  @override
+  Stream<String> get bluetoothStream {
+    return eventChannel.receiveBroadcastStream().cast();
   }
 }

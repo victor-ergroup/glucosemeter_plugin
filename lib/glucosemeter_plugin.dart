@@ -53,4 +53,8 @@ class GlucosemeterPlugin {
   Future<void> attachBluetoothListener(){
     return GlucosemeterPluginPlatform.instance.attachBluetoothListener();
   }
+
+  Stream<String> getBluetoothStream(){
+    return GlucosemeterPluginPlatform.instance.bluetoothStream;
+  }
 }

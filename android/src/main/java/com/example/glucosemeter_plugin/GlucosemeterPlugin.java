@@ -14,6 +14,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -40,6 +41,8 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
+
+  private EventChannel eventChannel;
 
   private Activity activity;
   private Context context;
@@ -316,6 +319,8 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
     bloodGlucoseBluetoothUtil = new BloodGlucoseBluetoothUtil(context);
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "glucosemeter_plugin");
     channel.setMethodCallHandler(this);
+    eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "glucosemeter_plugin_event");
+    eventChannel.setStreamHandler(new BluetoothListenerStreamHandler());
   }
 
   @Override

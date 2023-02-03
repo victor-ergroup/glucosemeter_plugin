@@ -36,10 +36,12 @@ class _MainPageState extends State<MainPage> {
     ];
 
     Map<Permission, PermissionStatus> permissionResult = await permissionList.request();
-    print(permissionResult);
+
     // await glucosemeterPlugin.initGlucoseBluetoothUtil();
     await glucosemeterPlugin.automaticConnectBluetooth();
     await glucosemeterPlugin.attachBluetoothListener();
+    //https://stackoverflow.com/questions/69672645/receive-strings-via-eventchannel-from-android
+    //https://www.soft-spoken.dev/how-to-listen-for-platform-specific-events-in-flutter/
   }
 
   @override
@@ -54,6 +56,16 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             children: [
               _buildGlucosemeterPluginControls(),
+              StreamBuilder<String>(
+                stream: glucosemeterPlugin.getBluetoothStream(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return Text('Random number:${snapshot.data}');
+                  }else{
+                    return Text('Waiting for random number');
+                  }
+                },
+              ),
               _buildFlutterBlueConnectedDevices(),
               _buildFlutterBlueScanDevice(),
             ],
