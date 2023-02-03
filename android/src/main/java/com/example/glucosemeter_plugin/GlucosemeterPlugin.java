@@ -48,20 +48,6 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
   private Context context;
   private BloodGlucoseBluetoothUtil bloodGlucoseBluetoothUtil;
 
-  private List<String> deviceList = Arrays.asList(
-    "BG-211b",
-    "BG-207b",
-    "BG-208b",
-    "BG-209b",
-    "BG-707b",
-    "BG-709b",
-    "BG-210b",
-    "BG-710b",
-    "BG-211b",
-    "BG-212b",
-    "BG-712b"
-  );
-
   public void openBluetooth(@NonNull MethodCall call, @NonNull Result result){
     try{
       bloodGlucoseBluetoothUtil.openBluetooth();

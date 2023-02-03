@@ -9,8 +9,12 @@ import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBluetoothUtil;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseDeviceBean;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseErBean;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -50,63 +54,128 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
             @Override
             public void onSearchStarted() {
                 Log.i("GLUCOSEMETER:INFO", "onSearchStarted runned");
-                postResult("onSearchStarted started");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "searchStarted");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onSearchStopped() {
                 Log.i("GLUCOSEMETER:INFO", "onSearchStopped runned");
-                postResult("search stopped");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "searchStopped");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onDeviceSpyListener(BluetoothDevice bluetoothDevice, Integer integer) {
                 Log.i("GLUCOSEMETER:INFO", "onDeviceSpyListener runned");
-                Log.i("GLUCOSEMETER:INFO", bluetoothDevice.getName());
                 if(deviceList.contains(bluetoothDevice.getName())){
                     bloodGlucoseBluetoothUtil.connectBluetooth(bluetoothDevice);
-                    postResult("connecting bluetooth");
+                    try {
+                        JSONObject resultMap = new JSONObject();
+                        resultMap.put("type", "deviceConnected");
+
+                        postResult(resultMap.toString());
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
             @Override
             public void onDeviceBreakListener() {
                 Log.i("GLUCOSEMETER:INFO", "onDeviceBreakListener runned");
-                postResult("onDeviceBreakListener runned");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "deviceBreak");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onDeviceConnectSucceed() {
                 Log.i("GLUCOSEMETER:INFO", "onDeviceConnectSucceed runned");
-                postResult("device connected");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "deviceConnectSucceed");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onConcentrationResultListener(BloodGlucoseBean bloodGlucoseBean) {
-                HashMap<String, String> resultMap = new HashMap<>();
-                resultMap.put("concentration", bloodGlucoseBean.getConcentration());
-                resultMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
+                try {
+                    Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned: " + bloodGlucoseBean.toString());
 
-                Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned: " + bloodGlucoseBean.toString());
-                postResult(resultMap.toString());
+                    JSONObject resultMap = new JSONObject();
+                    JSONObject dataMap = new JSONObject();
+
+                    dataMap.put("concentration", bloodGlucoseBean.getConcentration());
+                    dataMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
+
+                    resultMap.put("type", "searchStopped");
+                    resultMap.put("data", dataMap.toString());
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onTestPaperResultListener() {
                 Log.i("GLUCOSEMETER:INFO", "onTestPaperResultListener runned");
-                postResult("onTestPaperResultListener runned");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "testPaperListened");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onBleedResultListener() {
                 Log.i("GLUCOSEMETER:INFO", "onBleedResultListener runned");
-                postResult("onBleedResultListener runned");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "onBleedResultListened");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onDownTimeResultListener(int i) {
                 Log.i("GLUCOSEMETER:INFO", "onDownTimeResultListener runned");
-                postResult("onDownTimeResultListener runned");
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    resultMap.put("type", "onDownTimeListened");
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
@@ -133,7 +202,19 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                         break;
                 }
                 Log.i("GLUCOSEMETER:INFO", message);
-                postResult("onErTypeResultListener" + message);
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    JSONObject dataMap = new JSONObject();
+
+                    dataMap.put("message", message);
+
+                    resultMap.put("type", "errorTypeListener");
+                    resultMap.put("data", dataMap.toString());
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
@@ -147,34 +228,74 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                             .append(list.get(i).getConcentration());
                 }
                 Log.i("GLUCOSEMETER:INFO", "Received from memory" + data);
-                postResult("onMemorySynListener" + data);
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    JSONObject dataMap = new JSONObject();
+
+                    dataMap.put("message", String.valueOf(data));
+                    resultMap.put("type", "memorySyncListener");
+                    resultMap.put("data", dataMap.toString());
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onDeviceResultListener(BloodGlucoseDeviceBean bloodGlucoseDeviceBean) {
-                //仪器主要信息
-                StringBuilder data = new StringBuilder();
-                data.append("仪器主要信息：")
-                        .append("\n型号：")
-                        .append(bloodGlucoseDeviceBean.getDevice_model())
-                        .append("\n程序编码：")
-                        .append(bloodGlucoseDeviceBean.getDevice_procedure())
-                        .append("\n版本：")
-                        .append(bloodGlucoseDeviceBean.getDevice_versions());
-                Log.i("GLUCOSEMETER:INFO", "Received device info: " + data);
-                postResult(String.valueOf(data));
+                Log.i("GLUCOSEMETER:INFO", "Received device info: " + bloodGlucoseDeviceBean.toString());
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    JSONObject dataMap = new JSONObject();
+
+                    dataMap.put("model", bloodGlucoseDeviceBean.getDevice_model());
+                    dataMap.put("deviceProcedure", bloodGlucoseDeviceBean.getDevice_procedure());
+                    dataMap.put("deviceVersion", bloodGlucoseDeviceBean.getDevice_versions());
+
+                    resultMap.put("type", "deviceResultListener");
+                    resultMap.put("data", dataMap.toString());
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onReadBluetoothRssi(Integer integer) {
                 Log.i("GLUCOSEMETER:INFO", "onReadBluetoothRssi runned: " + integer.toString());
-                postResult("onReadBluetoothRssi: " + integer);
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    JSONObject dataMap = new JSONObject();
+
+                    dataMap.put("message", integer.toString());
+
+                    resultMap.put("type", "bluetoothRssi");
+                    resultMap.put("data", dataMap.toString());
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public void onDeviceConnectFailing(int i) {
                 Log.i("GLUCOSEMETER:INFO", "onDeviceConnectFailing runned: " + i);
-                postResult("onDeviceConnectFailing: " + i);
+                try {
+                    JSONObject resultMap = new JSONObject();
+                    JSONObject dataMap = new JSONObject();
+
+                    dataMap.put("message", String.valueOf(i));
+
+                    resultMap.put("type", "onDeviceConnectFailing");
+                    resultMap.put("data", dataMap.toString());
+
+                    postResult(resultMap.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
