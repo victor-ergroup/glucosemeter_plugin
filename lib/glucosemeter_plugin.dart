@@ -50,10 +50,6 @@ class GlucosemeterPlugin {
     return GlucosemeterPluginPlatform.instance.bluetoothState();
   }
 
-  Future<void> attachBluetoothListener(){
-    return GlucosemeterPluginPlatform.instance.attachBluetoothListener();
-  }
-
   Stream<String> getBluetoothStream(){
     return GlucosemeterPluginPlatform.instance.bluetoothStream;
   }

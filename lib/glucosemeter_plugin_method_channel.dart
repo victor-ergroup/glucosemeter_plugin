@@ -76,11 +76,6 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   }
 
   @override
-  Future<void> attachBluetoothListener() async {
-    return await methodChannel.invokeMethod<void>('attachBluetoothListener');
-  }
-
-  @override
   Stream<String> get bluetoothStream {
     return eventChannel.receiveBroadcastStream().cast();
   }

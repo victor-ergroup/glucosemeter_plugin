@@ -190,129 +190,6 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
     }
   }
 
-  public void attachBluetoothListener(@NonNull MethodCall call, @NonNull Result result){
-    Log.i("GLUCOSEMETER:INFO", "bluetoothListener attached");
-    activity.runOnUiThread(() -> bloodGlucoseBluetoothUtil.setBloodBluetoothListener(new BloodGlucoseBluetoothUtil.OnBloodBluetoothListener() {
-      @Override
-      public void onSearchStarted() {
-        Log.i("GLUCOSEMETER:INFO", "onSearchStarted runned");
-      }
-
-      @Override
-      public void onSearchStopped() {
-        Log.i("GLUCOSEMETER:INFO", "onSearchStopped runned");
-      }
-
-      @Override
-      public void onDeviceSpyListener(BluetoothDevice bluetoothDevice, Integer integer) {
-        Log.i("GLUCOSEMETER:INFO", "onDeviceSpyListener runned");
-        Log.i("GLUCOSEMETER:INFO", bluetoothDevice.getName());
-        if(deviceList.contains(bluetoothDevice.getName())){
-          bloodGlucoseBluetoothUtil.connectBluetooth(bluetoothDevice);
-        }
-      }
-
-      @Override
-      public void onDeviceBreakListener() {
-        Log.i("GLUCOSEMETER:INFO", "onDeviceBreakListener runned");
-      }
-
-      @Override
-      public void onDeviceConnectSucceed() {
-        Log.i("GLUCOSEMETER:INFO", "onDeviceConnectSucceed runned");
-      }
-
-      @Override
-      public void onConcentrationResultListener(BloodGlucoseBean bloodGlucoseBean) {
-        HashMap<String, String> resultMap = new HashMap<>();
-        resultMap.put("concentration", bloodGlucoseBean.getConcentration());
-        resultMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
-
-        Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned: " + bloodGlucoseBean.toString());
-//        result.success(resultMap);
-      }
-
-      @Override
-      public void onTestPaperResultListener() {
-        Log.i("GLUCOSEMETER:INFO", "onTestPaperResultListener runned");
-      }
-
-      @Override
-      public void onBleedResultListener() {
-        Log.i("GLUCOSEMETER:INFO", "onBleedResultListener runned");
-      }
-
-      @Override
-      public void onDownTimeResultListener(int i) {
-        Log.i("GLUCOSEMETER:INFO", "onDownTimeResultListener runned");
-      }
-
-      @Override
-      public void onErTypeResultListener(String s) {
-        String message = "";
-        switch (s){
-          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER1_RES:
-            message = "开机自检错误";
-            break;
-          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER2_RES:
-            message = "血糖试纸已使用过或被污染";
-            break;
-          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER3_RES:
-            message = "在血糖试纸上加血时间过早";
-            break;
-          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER4_RES:
-            message = "测试过程中，试纸被移动 或采样不稳";
-            break;
-          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER5_RES:
-            message = "血糖试纸型号不匹配";
-            break;
-          case BloodGlucoseErBean.BLOOD_GLUCOSE_ER6_RES:
-            message = "其他问题";
-            break;
-        }
-        Log.i("GLUCOSEMETER:INFO", message);
-//        result.success(message);
-      }
-
-      @Override
-      public void onMemorySynListener(List<BloodGlucoseBean> list) {
-        StringBuilder data = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-          data.append("\n"+(i + 1))
-                  .append("\n时间戳：")
-                  .append(list.get(i).getTimestamp())
-                  .append("\n浓度：")
-                  .append(list.get(i).getConcentration());
-        }
-        Log.i("GLUCOSEMETER:INFO", "Received from memory" + data);
-      }
-
-      @Override
-      public void onDeviceResultListener(BloodGlucoseDeviceBean bloodGlucoseDeviceBean) {
-        //仪器主要信息
-        StringBuilder data = new StringBuilder();
-        data.append("仪器主要信息：")
-                .append("\n型号：")
-                .append(bloodGlucoseDeviceBean.getDevice_model())
-                .append("\n程序编码：")
-                .append(bloodGlucoseDeviceBean.getDevice_procedure())
-                .append("\n版本：")
-                .append(bloodGlucoseDeviceBean.getDevice_versions());
-        Log.i("GLUCOSEMETER:INFO", "Received device info: " + data);
-      }
-
-      @Override
-      public void onReadBluetoothRssi(Integer integer) {
-        Log.i("GLUCOSEMETER:INFO", "onReadBluetoothRssi runned: " + integer.toString());
-      }
-
-      @Override
-      public void onDeviceConnectFailing(int i) {
-        Log.i("GLUCOSEMETER:INFO", "onDeviceConnectFailing runned: " + i);
-      }
-    }));
-  }
-
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext();
@@ -320,7 +197,7 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "glucosemeter_plugin");
     channel.setMethodCallHandler(this);
     eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "glucosemeter_plugin_event");
-    eventChannel.setStreamHandler(new BluetoothListenerStreamHandler());
+    eventChannel.setStreamHandler(new BluetoothListenerStreamHandler(bloodGlucoseBluetoothUtil));
   }
 
   @Override
@@ -360,9 +237,6 @@ public class GlucosemeterPlugin implements FlutterPlugin, MethodCallHandler, Act
         connectedBluetoothDeviceRssi(call, result);
       case "bluetoothState" :
         bluetoothState(call, result);
-        break;
-      case "attachBluetoothListener" :
-        attachBluetoothListener(call, result);
         break;
       default:
         result.notImplemented();

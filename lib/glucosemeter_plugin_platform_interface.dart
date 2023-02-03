@@ -72,10 +72,6 @@ abstract class GlucosemeterPluginPlatform extends PlatformInterface {
     throw UnimplementedError('bluetoothState() has not been implemented.');
   }
 
-  Future<void> attachBluetoothListener(){
-    throw UnimplementedError('attachBluetoothListener() has not been implemented.');
-  }
-
   Stream<String> get bluetoothStream {
     throw UnimplementedError('bluetoothStream() has not been implemented.');
   }
