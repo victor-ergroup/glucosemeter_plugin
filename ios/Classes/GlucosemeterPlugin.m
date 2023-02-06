@@ -1,7 +1,10 @@
 #import "GlucosemeterPlugin.h"
-#import "JTManager+BloodSugar.h"
+//#import "JTManager+BloodSugar.h"
 
-@implementation GlucosemeterPlugin
+@implementation GlucosemeterPlugin {
+    
+}
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"glucosemeter_plugin"
@@ -14,13 +17,14 @@
   if ([@"getPlatformVersion" isEqualToString:call.method]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
   } else if ([@"automaticConnectBluetooth" isEqualToString:call.method]){
-      [super automaticConnectBluetooth:call:call result:result];
+      [self automaticConnectBluetooth:call result:result];
   }else {
     result(FlutterMethodNotImplemented);
   }
 }
 
-+ (void)automaticConnectBluetooth:(FlutterMethodCall*)call result:(FlutterResult)result {
+
+- (void)automaticConnectBluetooth:(FlutterMethodCall*)call result:(FlutterResult)result{
     NSLog(@"test");
 }
 
