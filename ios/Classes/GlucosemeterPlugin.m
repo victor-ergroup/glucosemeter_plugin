@@ -2,6 +2,7 @@
 #import "JTManager+BloodSugar.h"
 
 @implementation GlucosemeterPlugin{
+    NSArray *deviceList;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -43,6 +44,23 @@
   }
 }
 
+- (void)initBluetooth:(FlutterMethodCall*)call result:(FlutterResult)result{
+    NSLog(@"initBluetooth executed");
+    deviceList = @[
+       @"BG-211b",
+       @"BG-207b",
+       @"BG-208b",
+       @"BG-209b",
+       @"BG-707b",
+       @"BG-709b",
+       @"BG-210b",
+       @"BG-710b",
+       @"BG-211b",
+       @"BG-212b",
+       @"BG-712b"
+    ];
+}
+
 - (void)scanBluetooth:(FlutterMethodCall*)call result:(FlutterResult)result{
     NSLog(@"scanBluetooth executed");
     [self.manager startScan];
@@ -82,17 +100,11 @@
 }
 
 - (void)bluetoothState:(FlutterMethodCall*)call result:(FlutterResult)result{
-    NSLog(@"connectedBluetoothDeviceAddress executed");
+    NSLog(@"bluetoothState executed");
     
     BOOL isConnected = self.manager.isConnected;
-    NSNumber *tempIsConnected = [NSNumber numberWithBool:FALSE];
-    
-    if(isConnected == TRUE){
-        tempIsConnected = [NSNumber numberWithBool:TRUE];
-    }else{
-        tempIsConnected = [NSNumber numberWithBool:FALSE];
-    }
-    
+    NSNumber *tempIsConnected = [NSNumber numberWithBool:isConnected];
+
     result(tempIsConnected);
 }
 
