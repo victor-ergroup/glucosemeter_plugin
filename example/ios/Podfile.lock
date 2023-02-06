@@ -1,4 +1,5 @@
 PODS:
+  - BabyBluetooth (0.7.0)
   - Flutter (1.0.0)
   - flutter_blue_plus (0.0.1):
     - Flutter
@@ -13,6 +14,7 @@ PODS:
   - Protobuf (3.21.9)
 
 DEPENDENCIES:
+  - BabyBluetooth
   - Flutter (from `Flutter`)
   - flutter_blue_plus (from `.symlinks/plugins/flutter_blue_plus/ios`)
   - glucosemeter_plugin (from `.symlinks/plugins/glucosemeter_plugin/ios`)
@@ -20,6 +22,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - BabyBluetooth
     - Protobuf
 
 EXTERNAL SOURCES:
@@ -33,12 +36,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
 
 SPEC CHECKSUMS:
+  BabyBluetooth: d50758aecf24d4a0ab9271d69f0f116d6bee51c9
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_blue_plus: 6787777145d615de01828f3a9fa423c3c702f0b3
   glucosemeter_plugin: ecd235164d8b0d164cb61f278b5e394560109ec2
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   Protobuf: 02524ec14183fe08fb259741659e79683788158b
 
-PODFILE CHECKSUM: 02caaa843f6501172c0d470d80e72f61175c8b93
+PODFILE CHECKSUM: 3aab79251a02a3a2566817a76644d2ef83343f6b
 
 COCOAPODS: 1.11.3

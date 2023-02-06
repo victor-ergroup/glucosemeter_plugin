@@ -1,5 +1,5 @@
 #import "GlucosemeterPlugin.h"
-//#import "JTManager+BloodSugar.h"
+#import "JTManager+BloodSugar.h"
 
 @implementation GlucosemeterPlugin {
     
