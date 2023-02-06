@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:glucosemeter_plugin/glucosemeter_plugin.dart';
+import 'package:glucosemeter_plugin_example/model/glucosemeter_result.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'device_info.dart';
+import 'model/glucosemeter_result_type.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -15,6 +20,11 @@ class _MainPageState extends State<MainPage> {
 
   final GlucosemeterPlugin glucosemeterPlugin = GlucosemeterPlugin();
   FlutterBluePlus  flutterBlue = FlutterBluePlus.instance;
+  List<GlucosemeterResult> glucosemeterResult = [];
+  late StreamSubscription streamSubscription;
+
+  String currentResultType = '';
+  String currentData = '';
 
   @override
   void initState() {
@@ -39,6 +49,18 @@ class _MainPageState extends State<MainPage> {
 
     await glucosemeterPlugin.automaticConnectBluetooth();
     //https://www.soft-spoken.dev/how-to-listen-for-platform-specific-events-in-flutter/
+    streamSubscription = glucosemeterPlugin.getBluetoothStream().listen((event) {
+      setState(() {
+        glucosemeterResult.add(GlucosemeterResult.fromJson(jsonDecode(event)));
+      });
+
+      if(glucosemeterResult.isNotEmpty){
+        setState(() {
+          currentResultType = processResultType(glucosemeterResult.last.type ?? '', glucosemeterResult.last.data);
+          currentData = glucosemeterResult.last.data ?? 'No data';
+        });
+      }
+    });
   }
 
   @override
@@ -53,22 +75,81 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             children: [
               _buildGlucosemeterPluginControls(),
-              StreamBuilder<String>(
-                stream: glucosemeterPlugin.getBluetoothStream(),
-                builder: (context, snapshot){
-                  if(snapshot.hasData){
-                    return Text('Data: ${snapshot.data}');
-                  }else{
-                    return const Text('Waiting for data');
-                  }
-                },
-              ),
-              _buildFlutterBlueConnectedDevices(),
-              _buildFlutterBlueScanDevice(),
+              _buildGlucosemeterCurrentState(),
+              _buildGlucosemeterPluginProcessedResult(),
+              // _buildFlutterBlueConnectedDevices(),
+              // _buildFlutterBlueScanDevice(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildGlucosemeterCurrentState(){
+    return glucosemeterResult.isNotEmpty ? SizedBox(
+      width: double.infinity,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Current status:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    currentResultType,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'Data:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
+                  Text(
+                    currentData,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    )
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    ) : Container();
+  }
+
+  Widget _buildGlucosemeterPluginProcessedResult(){
+    return ListView.builder(
+      shrinkWrap: true,
+      reverse: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: glucosemeterResult.length,
+      itemBuilder: (context, index){
+        return Column(
+          children: [
+            Text(glucosemeterResult[index].type ?? 'No type'),
+            Text(glucosemeterResult[index].data ?? 'No data'),
+          ],
+        );
+      },
     );
   }
 
@@ -138,6 +219,71 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
+  }
+
+  String processResultType(String type, String? data){
+    if(type == ResultType.searchStarted.toShortString()){
+      return 'Search started';
+    }
+
+    if(type == ResultType.searchStopped.toShortString()){
+      return 'Search Stopped';
+    }
+
+    if(type == ResultType.onDeviceSpyListener.toShortString()){
+      if(data != null){
+        return 'Device Connected';
+      }else{
+        return 'Searching';
+      }
+    }
+
+    if(type == ResultType.deviceBreak.toShortString()){
+      return 'Searching';
+    }
+
+    if(type == ResultType.onDeviceConnectSucceed.toShortString()){
+      return 'Device Connected Successfully';
+    }
+
+    if(type == ResultType.concentrationResultReceived.toShortString()){
+      return 'Concentration Result Received';
+    }
+
+    if(type == ResultType.testPaperListened.toShortString()){
+      return 'Test Paper Detected';
+    }
+
+    if(type == ResultType.onBleedResultListened.toShortString()){
+      //等待滴血 - From docs
+      return 'Waiting for Blood';
+    }
+
+    if(type == ResultType.onDownTimeListened.toShortString()){
+      return 'Counting Down Timer';
+    }
+
+    if(type == ResultType.errorTypeListener.toShortString()){
+      return 'Device Error Detected';
+    }
+
+    if(type == ResultType.memorySyncListener.toShortString()){
+      return 'Device Memory Synced';
+    }
+
+    if(type == ResultType.deviceResultListener.toShortString()){
+      return 'Device Information Received';
+    }
+
+    if(type == ResultType.bluetoothRssi.toShortString()){
+      return 'Device RSSI Received';
+    }
+
+    if(type == ResultType.onDeviceConnectFailing.toShortString()){
+      return 'Bluetooth Connection Failed';
+    }
+
+    return 'dafuq';
   }
 
   Widget _buildFlutterBlueConnectedDevices(){

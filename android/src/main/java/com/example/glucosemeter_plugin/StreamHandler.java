@@ -85,11 +85,23 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                     try {
                         JSONObject resultMap = new JSONObject();
                         resultMap.put("type", "deviceConnected");
+                        resultMap.put("data", "Connected to: " + bluetoothDevice.getName());
 
                         postResult(resultMap.toString());
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                }else{
+                    try {
+                        JSONObject resultMap = new JSONObject();
+                        resultMap.put("type", "onDeviceSpyListener");
+                        resultMap.put("data", "Not connected");
+
+                        postResult(resultMap.toString());
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
             }
 
@@ -130,7 +142,7 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                     dataMap.put("concentration", bloodGlucoseBean.getConcentration());
                     dataMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
 
-                    resultMap.put("type", "searchStopped");
+                    resultMap.put("type", "concentrationResultReceived");
                     resultMap.put("data", dataMap.toString());
 
                     postResult(resultMap.toString());
