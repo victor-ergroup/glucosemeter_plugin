@@ -84,7 +84,7 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                     bloodGlucoseBluetoothUtil.connectBluetooth(bluetoothDevice);
                     try {
                         JSONObject resultMap = new JSONObject();
-                        resultMap.put("type", "deviceConnected");
+                        resultMap.put("type", "onDeviceSpyListener");
                         resultMap.put("data", "Connected to: " + bluetoothDevice.getName());
 
                         postResult(resultMap.toString());
@@ -183,6 +183,7 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                 try {
                     JSONObject resultMap = new JSONObject();
                     resultMap.put("type", "onDownTimeListened");
+                    resultMap.put("data", i);
 
                     postResult(resultMap.toString());
                 } catch (JSONException e) {

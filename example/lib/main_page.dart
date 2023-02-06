@@ -46,9 +46,8 @@ class _MainPageState extends State<MainPage> {
     ];
 
     Map<Permission, PermissionStatus> permissionResult = await permissionList.request();
-
-    await glucosemeterPlugin.automaticConnectBluetooth();
     //https://www.soft-spoken.dev/how-to-listen-for-platform-specific-events-in-flutter/
+
     streamSubscription = glucosemeterPlugin.getBluetoothStream().listen((event) {
       setState(() {
         glucosemeterResult.add(GlucosemeterResult.fromJson(jsonDecode(event)));
@@ -57,10 +56,12 @@ class _MainPageState extends State<MainPage> {
       if(glucosemeterResult.isNotEmpty){
         setState(() {
           currentResultType = processResultType(glucosemeterResult.last.type ?? '', glucosemeterResult.last.data);
-          currentData = glucosemeterResult.last.data ?? 'No data';
+          currentData = processResultData(glucosemeterResult.last.type ?? '', glucosemeterResult.last.data);
         });
       }
     });
+
+    await glucosemeterPlugin.automaticConnectBluetooth();
   }
 
   @override
@@ -87,7 +88,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildGlucosemeterCurrentState(){
-    return glucosemeterResult.isNotEmpty ? SizedBox(
+    return SizedBox(
       width: double.infinity,
       child: Card(
         child: Padding(
@@ -133,7 +134,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
       ),
-    ) : Container();
+    );
   }
 
   Widget _buildGlucosemeterPluginProcessedResult(){
@@ -284,6 +285,54 @@ class _MainPageState extends State<MainPage> {
     }
 
     return 'dafuq';
+  }
+
+  String processResultData(String type, String? data){
+    if(type == ResultType.onDeviceSpyListener.toShortString()){
+      if(data != null){
+        return data;
+      }
+    }
+
+    if(type == ResultType.concentrationResultReceived.toShortString()){
+      if(data != null){
+        Map<String, String> map = jsonDecode(data);
+        return 'Concentration: ${map['concentration']} \n'
+            'Timestamp: ${map['timeStamp']}';
+      }
+    }
+
+    if(type == ResultType.onDownTimeListened.toShortString()){
+      return 'Timer: $data';
+    }
+
+    if(type == ResultType.errorTypeListener.toShortString()){
+      return 'Error: $data';
+    }
+
+    if(type == ResultType.memorySyncListener.toShortString()){
+      // Not sure yet
+      return 'Memory: $data';
+    }
+
+    if(type == ResultType.deviceResultListener.toShortString()){
+      if(data != null){
+        Map<String, String> map = jsonDecode(data);
+        return 'Model: ${map['model']} \n'
+            'Device Procedure: ${map['deviceProcedure']} \n'
+            'Device Version: : ${map['deviceVersion']}';
+      }
+    }
+
+    if(type == ResultType.bluetoothRssi.toShortString()){
+      return 'RSSI $data';
+    }
+
+    if(type == ResultType.onDeviceConnectFailing.toShortString()){
+      return 'Code: $data';
+    }
+
+    return 'No Data';
   }
 
   Widget _buildFlutterBlueConnectedDevices(){
