@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -164,18 +165,18 @@ class _MainPageState extends State<MainPage> {
             Wrap(
               spacing: 2.0,
               children: [
-                TextButton(
+                Platform.isAndroid ? TextButton(
                   child: const Text('Turn on Bluetooth'),
                   onPressed: () async {
                     await glucosemeterPlugin.openBluetooth();
                   },
-                ),
-                TextButton(
+                ) : Container(),
+                Platform.isAndroid ? TextButton(
                   child: const Text('Turn off Bluetooth'),
                   onPressed: () async {
                     await glucosemeterPlugin.closeBluetooth();
                   },
-                ),
+                ) : Container(),
                 TextButton(
                   child: const Text('Automatic Connect Bluetooth'),
                   onPressed: () async {
@@ -207,7 +208,6 @@ class _MainPageState extends State<MainPage> {
                 TextButton(
                   child: const Text('Bluetooth State'),
                   onPressed: () async {
-                    await glucosemeterPlugin.openBluetooth();
                     bool? result = await glucosemeterPlugin.bluetoothState();
                     if(!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.toString())));
