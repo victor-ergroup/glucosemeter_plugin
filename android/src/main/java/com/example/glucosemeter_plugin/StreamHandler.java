@@ -9,9 +9,11 @@ import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseBluetoothUtil;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseDeviceBean;
 import com.hzkj.bw.bloodglucoselibrary.BloodGlucoseErBean;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -183,7 +185,7 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                 try {
                     JSONObject resultMap = new JSONObject();
                     resultMap.put("type", "onDownTimeListened");
-                    resultMap.put("data", i);
+                    resultMap.put("data", String.valueOf(100));
 
                     postResult(resultMap.toString());
                 } catch (JSONException e) {
@@ -232,20 +234,22 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
 
             @Override
             public void onMemorySynListener(List<BloodGlucoseBean> list) {
-                StringBuilder data = new StringBuilder();
-                for (int i = 0; i < list.size(); i++) {
-                    data.append("\n"+(i + 1))
-                            .append("\n时间戳：")
-                            .append(list.get(i).getTimestamp())
-                            .append("\n浓度：")
-                            .append(list.get(i).getConcentration());
-                }
-                Log.i("GLUCOSEMETER:INFO", "Received from memory" + data);
+                Log.i("GLUCOSEMETER:INFO", "onMemorySynListener");
                 try {
                     JSONObject resultMap = new JSONObject();
                     JSONObject dataMap = new JSONObject();
+                    JSONArray bloodGlucoseDataArr = new JSONArray();
 
-                    dataMap.put("message", String.valueOf(data));
+                    for (int i = 0; i < list.size(); i++) {
+                        JSONObject glucoseData = new JSONObject();
+                        glucoseData.put("concentration", list.get(i).getConcentration());
+                        glucoseData.put("timestamp", list.get(i).getTimestamp());
+
+                        bloodGlucoseDataArr.put(glucoseData);
+                    }
+
+                    dataMap.put("message", bloodGlucoseDataArr.toString());
+
                     resultMap.put("type", "memorySyncListener");
                     resultMap.put("data", dataMap.toString());
 

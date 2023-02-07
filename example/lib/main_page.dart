@@ -233,9 +233,9 @@ class _MainPageState extends State<MainPage> {
 
     if(type == ResultType.onDeviceSpyListener.toShortString()){
       if(data != null){
-        return 'Device Connected';
-      }else{
         return 'Searching';
+      }else{
+        return 'Device connected';
       }
     }
 
@@ -296,7 +296,7 @@ class _MainPageState extends State<MainPage> {
 
     if(type == ResultType.concentrationResultReceived.toShortString()){
       if(data != null){
-        Map<String, String> map = jsonDecode(data);
+        Map<String, dynamic> map = jsonDecode(data);
         return 'Concentration: ${map['concentration']} \n'
             'Timestamp: ${map['timeStamp']}';
       }
@@ -307,17 +307,18 @@ class _MainPageState extends State<MainPage> {
     }
 
     if(type == ResultType.errorTypeListener.toShortString()){
-      return 'Error: $data';
+      return 'Error: ${jsonDecode(data!)['message']}';
     }
 
     if(type == ResultType.memorySyncListener.toShortString()){
-      // Not sure yet
-      return 'Memory: $data';
+      Map<String, dynamic> map = jsonDecode(data!);
+      List<Map<String, dynamic>> result = List<Map<String, dynamic>>.from(jsonDecode(map['message']));
+      return 'Memory: ${result.first['concentration']} - ${result.first['timestamp']}';
     }
 
     if(type == ResultType.deviceResultListener.toShortString()){
       if(data != null){
-        Map<String, String> map = jsonDecode(data);
+        Map<String, dynamic> map = jsonDecode(data);
         return 'Model: ${map['model']} \n'
             'Device Procedure: ${map['deviceProcedure']} \n'
             'Device Version: : ${map['deviceVersion']}';
@@ -325,11 +326,11 @@ class _MainPageState extends State<MainPage> {
     }
 
     if(type == ResultType.bluetoothRssi.toShortString()){
-      return 'RSSI $data';
+      return 'RSSI ${jsonDecode(data!)['message']}';
     }
 
     if(type == ResultType.onDeviceConnectFailing.toShortString()){
-      return 'Code: $data';
+      return 'Code: ${jsonDecode(data!)['message']}';
     }
 
     return 'No Data';
