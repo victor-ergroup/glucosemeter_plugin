@@ -7,7 +7,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:glucosemeter_plugin/glucosemeter_plugin.dart';
 import 'package:glucosemeter_plugin_example/model/glucosemeter_result.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'device_info.dart';
+import 'flutter_blue/device_info.dart';
 import 'model/glucosemeter_result_type.dart';
 
 class MainPage extends StatefulWidget {

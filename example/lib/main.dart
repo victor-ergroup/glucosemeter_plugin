@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:glucosemeter_plugin_example/flutter_blue_plus_example.dart';
 import 'package:glucosemeter_plugin_example/main_page.dart';
+import 'flutter_blue/flutter_blue_plus_example.dart';
 
 void main() {
   runApp(
