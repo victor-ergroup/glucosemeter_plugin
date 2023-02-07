@@ -136,13 +136,22 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
             @Override
             public void onConcentrationResultListener(BloodGlucoseBean bloodGlucoseBean) {
                 try {
-                    Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned: " + bloodGlucoseBean.toString());
+                    Log.i("GLUCOSEMETER:INFO", "onConcentrationResultListener runned");
 
                     JSONObject resultMap = new JSONObject();
                     JSONObject dataMap = new JSONObject();
 
-                    dataMap.put("concentration", bloodGlucoseBean.getConcentration());
-                    dataMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
+                    if(bloodGlucoseBean.getConcentration().isEmpty()){
+                        dataMap.put("concentration", "Empty");
+                    }else{
+                        dataMap.put("concentration", bloodGlucoseBean.getConcentration());
+                    }
+
+                    if(bloodGlucoseBean.getTimestamp().isEmpty()){
+                        dataMap.put("timeStamp", "Empty");
+                    }else{
+                        dataMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
+                    }
 
                     resultMap.put("type", "concentrationResultReceived");
                     resultMap.put("data", dataMap.toString());
@@ -195,6 +204,8 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
 
             @Override
             public void onErTypeResultListener(String s) {
+                Log.i("GLUCOSEMETER:INFO", "onErTypeResultListener: " + s);
+
                 String message = "";
                 switch (s){
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER1_RES:
