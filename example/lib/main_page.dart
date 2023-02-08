@@ -5,9 +5,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:glucosemeter_plugin/glucosemeter_plugin.dart';
+import 'package:glucosemeter_plugin_example/controller/shared_preferences_controller.dart';
 import 'package:glucosemeter_plugin_example/model/glucosemeter_result.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'flutter_blue/device_info.dart';
+import 'model/blood_glucose_data.dart';
 import 'model/glucosemeter_result_type.dart';
 
 class MainPage extends StatefulWidget {
@@ -22,6 +24,7 @@ class _MainPageState extends State<MainPage> {
   final GlucosemeterPlugin glucosemeterPlugin = GlucosemeterPlugin();
   FlutterBluePlus  flutterBlue = FlutterBluePlus.instance;
   List<GlucosemeterResult> glucosemeterResult = [];
+  List<BloodGlucoseData> bloodGlucoseDataList = [];
   late StreamSubscription streamSubscription;
 
   String currentResultType = '';
@@ -35,6 +38,14 @@ class _MainPageState extends State<MainPage> {
     });
 
     flutterBlue.startScan();
+    getSharedPrefData();
+  }
+
+  Future<void> getSharedPrefData() async {
+    List<BloodGlucoseData> tempBloodGlucoseDataList = await SharedPreferencesController.getConcentrationData();
+    setState(() {
+      bloodGlucoseDataList = tempBloodGlucoseDataList;
+    });
   }
 
   Future<void> initGlucosemeterPlugin() async {
@@ -49,15 +60,16 @@ class _MainPageState extends State<MainPage> {
     Map<Permission, PermissionStatus> permissionResult = await permissionList.request();
     //https://www.soft-spoken.dev/how-to-listen-for-platform-specific-events-in-flutter/
 
-    streamSubscription = glucosemeterPlugin.getBluetoothStream().listen((event) {
+    streamSubscription = glucosemeterPlugin.getBluetoothStream().listen((event) async {
       setState(() {
         glucosemeterResult.add(GlucosemeterResult.fromJson(jsonDecode(event)));
       });
 
       if(glucosemeterResult.isNotEmpty){
+        String resultData = await processResultData(glucosemeterResult.last.type ?? '', glucosemeterResult.last.data);
         setState(() {
           currentResultType = processResultType(glucosemeterResult.last.type ?? '', glucosemeterResult.last.data);
-          currentData = processResultData(glucosemeterResult.last.type ?? '', glucosemeterResult.last.data);
+          currentData = resultData;
         });
       }
     });
@@ -78,6 +90,7 @@ class _MainPageState extends State<MainPage> {
             children: [
               _buildGlucosemeterPluginControls(),
               _buildGlucosemeterCurrentState(),
+              _buildSavedResults(),
               _buildGlucosemeterPluginProcessedResult(),
               // _buildFlutterBlueConnectedDevices(),
               // _buildFlutterBlueScanDevice(),
@@ -287,7 +300,7 @@ class _MainPageState extends State<MainPage> {
     return 'dafuq';
   }
 
-  String processResultData(String type, String? data){
+  Future<String> processResultData(String type, String? data) async {
     if(type == ResultType.onDeviceSpyListener.toShortString()){
       if(data != null){
         return data;
@@ -297,6 +310,11 @@ class _MainPageState extends State<MainPage> {
     if(type == ResultType.concentrationResultReceived.toShortString()){
       if(data != null){
         Map<String, dynamic> map = jsonDecode(data);
+        SharedPreferencesController.setConcentrationData(
+          concentration: map['concentration'],
+          timestamp: map['timeStamp']
+        );
+        getSharedPrefData();
         return 'Concentration: ${map['concentration']} \n'
             'Timestamp: ${map['timeStamp']}';
       }
@@ -334,6 +352,46 @@ class _MainPageState extends State<MainPage> {
     }
 
     return 'No Data';
+  }
+
+  Widget _buildSavedResults(){
+    return Card(
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          title: const Text('Saved History'),
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                child: const Text('Clear'),
+                onPressed: () async {
+                  bool result = await SharedPreferencesController.clearConcentrationData();
+                  if(result){
+                    await getSharedPrefData();
+                    if(!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Data Cleared')));
+                  }
+                },
+              ),
+            ),
+            bloodGlucoseDataList.isNotEmpty ? SizedBox(
+              height: 300,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: bloodGlucoseDataList.length,
+                itemBuilder: (context, index){
+                  return ListTile(
+                    title: Text(bloodGlucoseDataList[index].concentration ?? ''),
+                    subtitle: Text(bloodGlucoseDataList[index].timestamp ?? ''),
+                  );
+                },
+              ),
+            ) : Container(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildFlutterBlueConnectedDevices(){
