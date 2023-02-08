@@ -272,7 +272,7 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
 
             @Override
             public void onDeviceResultListener(BloodGlucoseDeviceBean bloodGlucoseDeviceBean) {
-                Log.i("GLUCOSEMETER:INFO", "Received device info: " + bloodGlucoseDeviceBean.toString());
+                Log.i("GLUCOSEMETER:INFO", "Received device info");
                 try {
                     JSONObject resultMap = new JSONObject();
                     JSONObject dataMap = new JSONObject();
