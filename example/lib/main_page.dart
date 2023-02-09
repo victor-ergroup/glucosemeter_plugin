@@ -309,14 +309,13 @@ class _MainPageState extends State<MainPage> {
 
     if(type == ResultType.concentrationResultReceived.toShortString()){
       if(data != null){
-        Map<String, dynamic> map = jsonDecode(data);
+        BloodGlucoseData bloodGlucoseData = BloodGlucoseData.fromJson(jsonDecode(data));
         SharedPreferencesController.setConcentrationData(
-          concentration: map['concentration'],
-          timestamp: map['timeStamp']
+          bloodGlucoseData: bloodGlucoseData
         );
         getSharedPrefData();
-        return 'Concentration: ${map['concentration']} \n'
-            'Timestamp: ${map['timeStamp']}';
+        return 'Concentration: ${bloodGlucoseData.concentration} \n'
+            'Timestamp: ${bloodGlucoseData.timestamp}';
       }
     }
 
@@ -379,6 +378,7 @@ class _MainPageState extends State<MainPage> {
               height: 300,
               child: ListView.builder(
                 shrinkWrap: true,
+                reverse: true,
                 itemCount: bloodGlucoseDataList.length,
                 itemBuilder: (context, index){
                   return ListTile(

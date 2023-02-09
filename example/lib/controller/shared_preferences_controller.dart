@@ -7,12 +7,8 @@ import '../model/blood_glucose_data.dart';
 class SharedPreferencesController {
   static late SharedPreferences sharedPreferences;
 
-  static Future setConcentrationData({required String concentration, required String timestamp}) async {
+  static Future setConcentrationData({required BloodGlucoseData bloodGlucoseData}) async {
     sharedPreferences = await SharedPreferences.getInstance();
-    BloodGlucoseData bloodGlucoseData = BloodGlucoseData(
-      concentration: concentration,
-      timestamp: timestamp
-    );
 
     List<BloodGlucoseData> bloodGlucoseDataList = await getConcentrationData();
     bloodGlucoseDataList.add(bloodGlucoseData);
