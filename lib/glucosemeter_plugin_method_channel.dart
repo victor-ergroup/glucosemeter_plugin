@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'glucosemeter_plugin_platform_interface.dart';
+import 'model/glucosemeter_result.dart';
 
 /// An implementation of [GlucosemeterPluginPlatform] that uses method channels.
 class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
@@ -76,7 +79,9 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   }
 
   @override
-  Stream<String> get bluetoothStream {
-    return eventChannel.receiveBroadcastStream().cast();
+  Stream<GlucosemeterResult> get bluetoothStream {
+    return eventChannel.receiveBroadcastStream().cast().asyncMap(
+      (event) => GlucosemeterResult.fromJson(jsonDecode(event))
+    );
   }
 }

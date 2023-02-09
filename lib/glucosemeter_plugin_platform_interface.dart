@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'glucosemeter_plugin_method_channel.dart';
+import 'model/glucosemeter_result.dart';
 
 abstract class GlucosemeterPluginPlatform extends PlatformInterface {
   /// Constructs a GlucosemeterPluginPlatform.
@@ -72,7 +73,7 @@ abstract class GlucosemeterPluginPlatform extends PlatformInterface {
     throw UnimplementedError('bluetoothState() has not been implemented.');
   }
 
-  Stream<String> get bluetoothStream {
+  Stream<GlucosemeterResult> get bluetoothStream {
     throw UnimplementedError('bluetoothStream() has not been implemented.');
   }
 }

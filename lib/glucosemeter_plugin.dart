@@ -1,5 +1,6 @@
 
 import 'glucosemeter_plugin_platform_interface.dart';
+import 'model/glucosemeter_result.dart';
 
 class GlucosemeterPlugin {
   Future<String?> getPlatformVersion() {
@@ -50,7 +51,7 @@ class GlucosemeterPlugin {
     return GlucosemeterPluginPlatform.instance.bluetoothState();
   }
 
-  Stream<String> getBluetoothStream(){
+  Stream<GlucosemeterResult> getBluetoothStream(){
     return GlucosemeterPluginPlatform.instance.bluetoothStream;
   }
 }

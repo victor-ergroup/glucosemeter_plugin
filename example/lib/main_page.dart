@@ -62,7 +62,7 @@ class _MainPageState extends State<MainPage> {
 
     streamSubscription = glucosemeterPlugin.getBluetoothStream().listen((event) async {
       setState(() {
-        glucosemeterResult.add(GlucosemeterResult.fromJson(jsonDecode(event)));
+        glucosemeterResult.add(event);
       });
 
       if(glucosemeterResult.isNotEmpty){
