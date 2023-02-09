@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../model/blood_glucose_data.dart';
+import 'package:glucosemeter_plugin/model/blood_glucose_data.dart';
 
 class SharedPreferencesController {
   static late SharedPreferences sharedPreferences;
