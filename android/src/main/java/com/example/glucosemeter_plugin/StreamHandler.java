@@ -202,7 +202,7 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                 try {
                     JSONObject resultMap = new JSONObject();
                     resultMap.put("type", "onDownTimeListened");
-                    resultMap.put("data", String.valueOf(100));
+                    resultMap.put("data", String.valueOf(i));
 
                     postResult(resultMap.toString());
                 } catch (JSONException e) {
