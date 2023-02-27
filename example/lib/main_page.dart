@@ -7,6 +7,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:glucosemeter_plugin/glucosemeter_plugin.dart';
 import 'package:glucosemeter_plugin_example/controller/shared_preferences_controller.dart';
 import 'package:glucosemeter_plugin/model/glucosemeter_result.dart';
+import 'package:glucosemeter_plugin_example/model/glucosemeter_connect_status.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'flutter_blue/device_info.dart';
 import 'package:glucosemeter_plugin/model/blood_glucose_data.dart';
@@ -321,7 +322,8 @@ class _MainPageState extends State<MainPage> {
   Future<String> processResultData(String type, String? data) async {
     if(type == ResultType.onDeviceSpyListener.toShortString()){
       if(data != null){
-        return data;
+        GlucosemeterConnectStatus glucosemeterConnectStatus = GlucosemeterConnectStatus.fromJson(jsonDecode(data));
+        return glucosemeterConnectStatus.toJson().toString();
       }
     }
 
