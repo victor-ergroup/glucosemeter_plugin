@@ -148,9 +148,9 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                     }
 
                     if(bloodGlucoseBean.getTimestamp().isEmpty()){
-                        dataMap.put("timeStamp", "Empty");
+                        dataMap.put("timestamp", "Empty");
                     }else{
-                        dataMap.put("timeStamp", bloodGlucoseBean.getTimestamp());
+                        dataMap.put("timestamp", bloodGlucoseBean.getTimestamp());
                     }
 
                     resultMap.put("type", "concentrationResultReceived");

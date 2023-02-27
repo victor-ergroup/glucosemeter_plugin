@@ -39,6 +39,6 @@ android {
 
 dependencies {
     implementation fileTree(include:['*.jar'], dir:'libs')
-    implementation (name:'bloodglucoselibrary', ext:'aar')
+    implementation (name:'bloodglucoselibrary-release', ext:'aar')
     implementation (name:'bluetoothlibrary', ext:'aar')
 }
