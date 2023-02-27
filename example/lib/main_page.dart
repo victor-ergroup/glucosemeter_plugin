@@ -74,7 +74,7 @@ class _MainPageState extends State<MainPage> {
       }
     });
 
-    await glucosemeterPlugin.automaticConnectBluetooth();
+    // await glucosemeterPlugin.automaticConnectBluetooth();
   }
 
   @override
@@ -222,6 +222,24 @@ class _MainPageState extends State<MainPage> {
                   child: const Text('Bluetooth State'),
                   onPressed: () async {
                     bool? result = await glucosemeterPlugin.bluetoothState();
+                    if(!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.toString())));
+                    // print(result);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Connected Device Name'),
+                  onPressed: () async {
+                    String? result = await glucosemeterPlugin.connectedDeviceName();
+                    if(!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.toString())));
+                    // print(result);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Get Platform Version'),
+                  onPressed: () async {
+                    String? result = await glucosemeterPlugin.getPlatformVersion();
                     if(!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.toString())));
                     // print(result);
