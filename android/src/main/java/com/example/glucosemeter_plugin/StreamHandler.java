@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import io.flutter.plugin.common.EventChannel;
 
@@ -217,22 +218,22 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                 String message = "";
                 switch (s){
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER1_RES:
-                        message = "开机自检错误";
+                        message = "An error occurred when the device turning on";
                         break;
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER2_RES:
-                        message = "血糖试纸已使用过或被污染";
+                        message = "The test strip has been used or contaminated";
                         break;
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER3_RES:
-                        message = "在血糖试纸上加血时间过早";
+                        message = "It is too early to add blood to the blood sugar test strip";
                         break;
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER4_RES:
-                        message = "测试过程中，试纸被移动 或采样不稳";
+                        message = "The test strip was moved or the sample was not stable during the test";
                         break;
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER5_RES:
-                        message = "血糖试纸型号不匹配";
+                        message = "The model of the blood glucose test strip does not match";
                         break;
                     case BloodGlucoseErBean.BLOOD_GLUCOSE_ER6_RES:
-                        message = "其他问题";
+                        message = "Other issues";
                         break;
                 }
                 Log.i("GLUCOSEMETER:INFO", message);
