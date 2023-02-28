@@ -63,7 +63,67 @@ class GlucosemeterPlugin {
     return GlucosemeterPluginPlatform.instance.bluetoothState();
   }
 
-  /// Stream data from bluetooth device. ie: BloodGlucoseData
+  /// Stream data from bluetooth device. ie: BloodGlucoseData.
+  /// Use `GlucosemeterResult` model to parse the result.
+  /// Available type functions:
+  /// `searchStarted`
+  /// `searchStopped`
+  /// `onDeviceSpyListener`
+  /// ```json
+  /// data {
+  ///   "deviceName" : "<device_name>" // nullable
+  ///   "isConnected" : true,
+  /// }
+  /// ```
+  /// `deviceBreak`
+  /// `deviceConnectSucceed`
+  /// `concentrationResultReceived`
+  ///  ```json
+  ///  data { // BloodGlucoseData
+  ///    "concentration" : "4.14",
+  ///    "timestamp" : "1677458329",
+  ///  }
+  ///  ```
+  /// `testPaperListened`
+  /// `onBleedResultListened`
+  /// `onDownTimeListened`
+  /// ```json
+  /// data {
+  ///   // timer
+  /// }
+  /// ```
+  /// `errorTypeListener`
+  /// ```json
+  /// data {
+  ///   // error type
+  /// }
+  /// ```
+  /// `memorySyncListener`
+  /// ```json
+  /// data {
+  ///   // List of BloodGlucoseData
+  /// }
+  /// ```
+  /// `deviceResultListener`
+  /// ```json
+  /// data {
+  ///   "model" : "<device_model>",
+  ///   "deviceProcedure" : "<device_procedure>",
+  ///   "deviceVersion" : "<device_version>"
+  /// }
+  /// ```
+  /// `bluetoothRssi`
+  /// ```json
+  /// data {
+  ///   // RSSI
+  /// }
+  /// ```
+  /// `onDeviceConnectFailing`
+  /// ```json
+  /// data {
+  ///   // failure code
+  /// }
+  /// ```
   Stream<GlucosemeterResult> getBluetoothStream(){
     return GlucosemeterPluginPlatform.instance.bluetoothStream;
   }
