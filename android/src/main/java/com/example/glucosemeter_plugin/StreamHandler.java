@@ -268,10 +268,10 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                         bloodGlucoseDataArr.put(glucoseData);
                     }
 
-                    dataMap.put("message", bloodGlucoseDataArr.toString());
+                    dataMap.put("message", bloodGlucoseDataArr);
 
                     resultMap.put("type", "memorySyncListener");
-                    resultMap.put("data", dataMap.toString());
+                    resultMap.put("data", dataMap);
 
                     postResult(resultMap.toString());
                 } catch (JSONException e) {
