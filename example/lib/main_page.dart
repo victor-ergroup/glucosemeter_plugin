@@ -9,7 +9,6 @@ import 'package:glucosemeter_plugin_example/controller/shared_preferences_contro
 import 'package:glucosemeter_plugin/model/glucosemeter_result.dart';
 import 'package:glucosemeter_plugin/model/glucosemeter_connect_status.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'flutter_blue/device_info.dart';
 import 'package:glucosemeter_plugin/model/blood_glucose_data.dart';
 import 'model/glucosemeter_result_type.dart';
 
@@ -23,7 +22,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 
   final GlucosemeterPlugin glucosemeterPlugin = GlucosemeterPlugin();
-  FlutterBluePlus  flutterBlue = FlutterBluePlus.instance;
   List<GlucosemeterResult> glucosemeterResult = [];
   List<BloodGlucoseData> bloodGlucoseDataList = [];
   late StreamSubscription streamSubscription;
@@ -38,7 +36,6 @@ class _MainPageState extends State<MainPage> {
       initGlucosemeterPlugin();
     });
 
-    flutterBlue.startScan();
     getSharedPrefData();
   }
 
@@ -348,9 +345,10 @@ class _MainPageState extends State<MainPage> {
     }
 
     if(type == ResultType.memorySyncListener.toShortString()){
+      print(data);
       Map<String, dynamic> map = jsonDecode(data!);
-      List<Map<String, dynamic>> result = List<Map<String, dynamic>>.from(jsonDecode(map['message']));
-      return 'Memory: ${result.first['concentration']} - ${result.first['timestamp']}';
+      // List<Map<String, dynamic>> result = List<Map<String, dynamic>>.from(jsonDecode(map['message']));
+      // return 'Memory: ${result.first['concentration']} - ${result.first['timestamp']}';
     }
 
     if(type == ResultType.deviceResultListener.toShortString()){
@@ -408,146 +406,6 @@ class _MainPageState extends State<MainPage> {
                 },
               ),
             ) : Container(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFlutterBlueConnectedDevices(){
-    return Card(
-      child: SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Connected devices',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )
-                ),
-              ),
-              FutureBuilder(
-                future: flutterBlue.connectedDevices,
-                builder: (context, snapshot){
-                  if(snapshot.data == null) return const Text('No connected devices');
-                  if(snapshot.data!.isEmpty) return const Text('No connected devices');
-
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index){
-                      return Card(
-                        child: ListTile(
-                          title: Text(snapshot.data![index].name),
-                          onTap: (){
-                            Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (_){
-                                      return DeviceInfo(bluetoothDevice: snapshot.data![index]);
-                                    }
-                                )
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          )
-      ),
-    );
-  }
-
-  Widget _buildFlutterBlueScanDevice(){
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Scanned Devices',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-            ),
-            StreamBuilder(
-              stream: flutterBlue.isScanning,
-              builder: (context, snapshot){
-                if(snapshot.data == false){
-                  return TextButton(
-                    child: const Text('Scan'),
-                    onPressed: (){
-                      flutterBlue.startScan();
-                    },
-                  );
-                }else{
-                  return TextButton(
-                    child: const Text('Stop Scan'),
-                    onPressed: (){
-                      flutterBlue.stopScan();
-                    },
-                  );
-                }
-              },
-            ),
-            StreamBuilder(
-              stream: flutterBlue.scanResults,
-              builder: (context, snapshot){
-                if(snapshot.data == null) return const Text('Null');
-                if(snapshot.data!.isEmpty) return const Text('Empty');
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, index){
-                    return Card(
-                      child: ListTile(
-                        title: Text(snapshot.data![index].device.name),
-                        subtitle: Text(snapshot.data![index].device.type.name),
-                        trailing: Text(snapshot.data![index].advertisementData.connectable.toString()),
-                        onTap: () async {
-                          try{
-                            await snapshot.data![index].device.connect();
-                            if(!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Connected')));
-                          }catch(e){
-                            print(e);
-                            if(!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                          }
-                          // await glucosemeterPlugin.attachBluetoothListener();
-                        },
-                        onLongPress: (){
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_){
-                                return DeviceInfo(bluetoothDevice: snapshot.data![index].device);
-                              }
-                            )
-                          );
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
           ],
         ),
       ),

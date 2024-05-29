@@ -81,7 +81,10 @@ class MethodChannelGlucosemeterPlugin extends GlucosemeterPluginPlatform {
   @override
   Stream<GlucosemeterResult> get bluetoothStream {
     return eventChannel.receiveBroadcastStream().cast().asyncMap(
-      (event) => GlucosemeterResult.fromJson(jsonDecode(event))
+      (event) {
+        print(event);
+        return GlucosemeterResult.fromJson(jsonDecode(event));
+      }
     );
   }
 }

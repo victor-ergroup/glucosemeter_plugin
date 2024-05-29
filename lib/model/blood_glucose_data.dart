@@ -5,8 +5,8 @@ class BloodGlucoseData {
   BloodGlucoseData({this.concentration, this.timestamp});
 
   BloodGlucoseData.fromJson(Map<String, dynamic> json) {
-    concentration = json['concentration'];
-    timestamp = json['timestamp'];
+    concentration = json['concentration'].toString();
+    timestamp = json['timestamp'].toString();
   }
 
   Map<String, dynamic> toJson() {

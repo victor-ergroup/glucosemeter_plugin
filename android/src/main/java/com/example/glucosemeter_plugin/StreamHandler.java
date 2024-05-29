@@ -257,7 +257,6 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                 Log.i("GLUCOSEMETER:INFO", "onMemorySynListener");
                 try {
                     JSONObject resultMap = new JSONObject();
-                    JSONObject dataMap = new JSONObject();
                     JSONArray bloodGlucoseDataArr = new JSONArray();
 
                     for (int i = 0; i < list.size(); i++) {
@@ -268,10 +267,8 @@ class BluetoothListenerStreamHandler implements EventChannel.StreamHandler {
                         bloodGlucoseDataArr.put(glucoseData);
                     }
 
-                    dataMap.put("message", bloodGlucoseDataArr);
-
                     resultMap.put("type", "memorySyncListener");
-                    resultMap.put("data", dataMap);
+                    resultMap.put("data", bloodGlucoseDataArr);
 
                     postResult(resultMap.toString());
                 } catch (JSONException e) {
