@@ -2,15 +2,10 @@ PODS:
   - Flutter (1.0.0)
   - flutter_blue_plus (0.0.1):
     - Flutter
-    - flutter_blue_plus/Protos (= 0.0.1)
-  - flutter_blue_plus/Protos (0.0.1):
-    - Flutter
-    - Protobuf (~> 3.11)
   - glucosemeter_plugin (0.0.1):
     - Flutter
   - permission_handler_apple (9.0.4):
     - Flutter
-  - Protobuf (3.21.9)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -21,10 +16,6 @@ DEPENDENCIES:
   - glucosemeter_plugin (from `.symlinks/plugins/glucosemeter_plugin/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-
-SPEC REPOS:
-  trunk:
-    - Protobuf
 
 EXTERNAL SOURCES:
   Flutter:
@@ -39,13 +30,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_blue_plus: 6787777145d615de01828f3a9fa423c3c702f0b3
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_blue_plus: 4837da7d00cf5d441fdd6635b3a57f936778ea96
   glucosemeter_plugin: ecd235164d8b0d164cb61f278b5e394560109ec2
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  Protobuf: 02524ec14183fe08fb259741659e79683788158b
   shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
 
-PODFILE CHECKSUM: 02caaa843f6501172c0d470d80e72f61175c8b93
+PODFILE CHECKSUM: 6e700dec67e6deac9b1c69bb14c49a2217a12d15
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2
